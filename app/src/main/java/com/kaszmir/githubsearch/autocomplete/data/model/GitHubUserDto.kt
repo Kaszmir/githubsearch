@@ -1,5 +1,6 @@
-package com.kaszmir.githubsearch.autocomplete.data
+package com.kaszmir.githubsearch.autocomplete.data.model
 
+import com.kaszmir.githubsearch.autocomplete.domain.model.SearchResult
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -13,4 +14,9 @@ data class GitHubUserDto(
     val type: String = "",
     val score: Double = 0.0,
     @SerialName("site_admin") val siteAdmin: Boolean = false
+)
+fun GitHubUserDto.toDomain() = SearchResult.User(
+    id = id,
+    displayName = login,
+    pictureUrl = avatarUrl
 )

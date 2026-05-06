@@ -1,4 +1,4 @@
-package com.kaszmir.githubsearch.autocomplete.data
+package com.kaszmir.githubsearch.autocomplete.data.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

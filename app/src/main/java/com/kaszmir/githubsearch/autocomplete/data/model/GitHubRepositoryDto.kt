@@ -1,5 +1,6 @@
-package com.kaszmir.githubsearch.autocomplete.data
+package com.kaszmir.githubsearch.autocomplete.data.model
 
+import com.kaszmir.githubsearch.autocomplete.domain.model.SearchResult
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -31,3 +32,5 @@ data class GitHubRepositoryDto(
     val visibility: String = "",
     val license: GitHubLicenseDto? = null
 )
+fun GitHubRepositoryDto.toDomain() =
+    SearchResult.Repository(id = id, displayName = name, score = score)
