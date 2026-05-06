@@ -1,4 +1,4 @@
-package com.kaszmir.githubsearch
+package com.kaszmir.githubsearch.core
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp

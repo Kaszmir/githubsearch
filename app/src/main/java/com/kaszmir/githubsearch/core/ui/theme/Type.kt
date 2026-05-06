@@ -1,4 +1,4 @@
-package com.kaszmir.githubsearch.ui.theme
+package com.kaszmir.githubsearch.core.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
