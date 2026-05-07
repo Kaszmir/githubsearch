@@ -2,6 +2,7 @@ package com.kaszmir.githubsearch.autocomplete.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -17,11 +18,13 @@ import com.kaszmir.githubsearch.autocomplete.domain.model.SearchResult
 
 @Composable
 fun SearchResultsDropdown(
+    loading: Boolean,
     searchResults: List<SearchResult>,
     modifier: Modifier = Modifier
 ) {
     val shape = RoundedCornerShape(12.dp)
     LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(2.dp),
         modifier = modifier
             .fillMaxWidth()
             .padding(top = 4.dp)
@@ -34,17 +37,24 @@ fun SearchResultsDropdown(
                 shape = shape
             )
     ) {
-        items(searchResults) {
-            when(it) {
-                is SearchResult.User -> SearchResultUserItem(
-                    userName = it.displayName,
-                    modifier = modifier
-                )
-                is SearchResult.Repository -> SearchResultRepoItem(
-                    repoName = it.displayName,
-                    repoScore = it.starsCount,
-                    modifier = modifier
-                )
+
+        if(loading) {
+            items(15) {
+                SearchLoadingItem(isLoading = loading)
+            }
+        }else {
+            items(searchResults) {
+                when(it) {
+                    is SearchResult.User -> SearchResultUserItem(
+                        userName = it.displayName,
+                        modifier = modifier
+                    )
+                    is SearchResult.Repository -> SearchResultRepoItem(
+                        repoName = it.displayName,
+                        repoScore = it.starsCount,
+                        modifier = modifier
+                    )
+                }
             }
         }
     }

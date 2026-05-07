@@ -1,6 +1,5 @@
 package com.kaszmir.githubsearch.autocomplete.presentation
 
-import android.app.appsearch.SearchResult
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -44,11 +43,10 @@ private fun AutoCompleteLayout(
         SearchBar(
             query = uiState.query,
             onQueryChange = queryTextChanged,
-            onClear = clearQueryClicked,
-            modifier = modifier
+            onClear = clearQueryClicked
         )
 
-        val showResults = uiState.query.isNotEmpty() && uiState.searchResults.isNotEmpty()
+        val showResults = uiState.query.isNotEmpty()
 
         AnimatedVisibility(
             visible = showResults,
@@ -56,10 +54,10 @@ private fun AutoCompleteLayout(
             exit = fadeOut() + shrinkVertically()
         ) {
             SearchResultsDropdown(
+                loading = uiState.isLoading,
                 searchResults = uiState.searchResults,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
         }
     }
-
 }
