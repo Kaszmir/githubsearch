@@ -54,6 +54,7 @@ private fun AutoCompleteLayout(
         ) {
             SearchResultsDropdown(
                 loading = uiState.isLoading,
+                errorMessage = uiState.errorMessage,
                 searchResults = uiState.searchResults,
                 modifier = Modifier.padding(bottom = 8.dp)
             )

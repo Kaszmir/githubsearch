@@ -106,6 +106,22 @@ fun SearchLoadingItem(isLoading: Boolean) {
 }
 
 @Composable
+fun SearchErrorState(errorMessage: String) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+    ) {
+        Text(
+            text = errorMessage,
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.error,
+        )
+    }
+}
+
+@Composable
 fun SearchEmptyState() {
     Box(
         contentAlignment = Alignment.Center,
@@ -150,4 +166,10 @@ private fun SearchLoadingItemPreview() {
 @Composable
 private fun SearchEmptyStateItemPreview() {
     SearchEmptyState()
+}
+
+@Preview
+@Composable
+private fun SearchErrorStateItemPreview() {
+    SearchErrorState("Error")
 }

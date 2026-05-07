@@ -19,6 +19,7 @@ import com.kaszmir.githubsearch.autocomplete.domain.model.SearchResult
 @Composable
 fun SearchResultsDropdown(
     loading: Boolean,
+    errorMessage: String?,
     searchResults: List<SearchResult>,
     modifier: Modifier = Modifier
 ) {
@@ -37,26 +38,26 @@ fun SearchResultsDropdown(
                 shape = shape
             )
     ) {
+        if(errorMessage != null) {
+            item { SearchErrorState(errorMessage) }
+            return@LazyColumn
+        }
         if(loading) {
             items(15) {
                 SearchLoadingItem(isLoading = loading)
             }
         }else {
-            if(searchResults.isEmpty()) {
-                item { SearchEmptyState() }
-            }else {
-                items(searchResults) {
-                    when(it) {
-                        is SearchResult.User -> SearchResultUserItem(
-                            userName = it.displayName,
-                            modifier = modifier
-                        )
-                        is SearchResult.Repository -> SearchResultRepoItem(
-                            repoName = it.displayName,
-                            repoScore = it.starsCount,
-                            modifier = modifier
-                        )
-                    }
+            items(searchResults) {
+                when(it) {
+                    is SearchResult.User -> SearchResultUserItem(
+                        userName = it.displayName,
+                        modifier = modifier
+                    )
+                    is SearchResult.Repository -> SearchResultRepoItem(
+                        repoName = it.displayName,
+                        repoScore = it.starsCount,
+                        modifier = modifier
+                    )
                 }
             }
         }
