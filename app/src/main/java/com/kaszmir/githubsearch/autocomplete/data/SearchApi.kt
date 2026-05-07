@@ -12,7 +12,7 @@ interface SearchApi {
         @Query("per_page") resultPerPage: Int
     ): GitHubUsersResponseDto
 
-    @GET("serach/repositories")
+    @GET("search/repositories")
     suspend fun searchRepositories(
         @Query("q") query: String,
         @Query("per_page") resultPerPage: Int

@@ -1,5 +1,6 @@
 package com.kaszmir.githubsearch.autocomplete.domain
 
+import android.util.Log
 import com.kaszmir.githubsearch.autocomplete.domain.model.SearchQuery
 import com.kaszmir.githubsearch.autocomplete.domain.model.SearchResult
 import com.kaszmir.githubsearch.autocomplete.domain.repository.RepositoryRepository
@@ -12,13 +13,20 @@ class SearchUseCase @Inject constructor(
     private val userRepository: UserRepository,
     private val repoRepository: RepositoryRepository,
 ) {
-    suspend operator fun invoke(query: SearchQuery): List<SearchResult> = coroutineScope {
+    suspend operator fun invoke(query: SearchQuery): Result<List<SearchResult>> = coroutineScope {
+        Log.d("lolTag", "invoke: ehehehhe")
         val users = async { userRepository.searchUsers(query) }
         val repos = async { repoRepository.searchRepositories(query) }
 
-        val userResults = users.await().getOrElse { emptyList() }
-        val repoResults = repos.await().getOrElse { emptyList() }
+        val userResults = users.await()
+        val repoResults = repos.await()
 
-        (userResults + repoResults).sortedBy { it.displayName }
+        if(userResults.isFailure && repoResults.isFailure) {
+            Result.failure(userResults.exceptionOrNull() ?: Exception("Both requests failed"))
+        } else {
+            val userList = userResults.getOrElse { emptyList() }
+            val repoList = repoResults.getOrElse { emptyList() }
+            Result.success((userList + repoList).sortedBy { it.displayName })
+        }
     }
 }

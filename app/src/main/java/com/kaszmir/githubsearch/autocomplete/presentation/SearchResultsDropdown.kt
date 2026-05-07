@@ -42,7 +42,7 @@ fun SearchResultsDropdown(
                 )
                 is SearchResult.Repository -> SearchResultRepoItem(
                     repoName = it.displayName,
-                    repoScore = it.score,
+                    repoScore = it.starsCount,
                     modifier = modifier
                 )
             }
