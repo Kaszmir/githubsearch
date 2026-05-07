@@ -105,6 +105,22 @@ fun SearchLoadingItem(isLoading: Boolean) {
     )
 }
 
+@Composable
+fun SearchEmptyState() {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+    ) {
+        Text(
+            text = "No Results",
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurface,
+        )
+    }
+}
+
 
 @Preview
 @Composable
@@ -128,4 +144,10 @@ private fun SearchResultRepoItemPreview() {
 @Composable
 private fun SearchLoadingItemPreview() {
     SearchLoadingItem(isLoading = true)
+}
+
+@Preview
+@Composable
+private fun SearchEmptyStateItemPreview() {
+    SearchEmptyState()
 }

@@ -28,7 +28,6 @@ fun AutoCompleteWidget(
     )
 }
 
-
 @Composable
 private fun AutoCompleteLayout(
     uiState: AutoCompleteState,

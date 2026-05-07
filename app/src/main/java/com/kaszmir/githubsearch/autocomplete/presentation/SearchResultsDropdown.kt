@@ -37,23 +37,26 @@ fun SearchResultsDropdown(
                 shape = shape
             )
     ) {
-
         if(loading) {
             items(15) {
                 SearchLoadingItem(isLoading = loading)
             }
         }else {
-            items(searchResults) {
-                when(it) {
-                    is SearchResult.User -> SearchResultUserItem(
-                        userName = it.displayName,
-                        modifier = modifier
-                    )
-                    is SearchResult.Repository -> SearchResultRepoItem(
-                        repoName = it.displayName,
-                        repoScore = it.starsCount,
-                        modifier = modifier
-                    )
+            if(searchResults.isEmpty()) {
+                item { SearchEmptyState() }
+            }else {
+                items(searchResults) {
+                    when(it) {
+                        is SearchResult.User -> SearchResultUserItem(
+                            userName = it.displayName,
+                            modifier = modifier
+                        )
+                        is SearchResult.Repository -> SearchResultRepoItem(
+                            repoName = it.displayName,
+                            repoScore = it.starsCount,
+                            modifier = modifier
+                        )
+                    }
                 }
             }
         }
