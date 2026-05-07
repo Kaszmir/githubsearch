@@ -12,6 +12,6 @@ sealed class SearchResult {
     data class Repository(
         val id: Long,
         override val displayName: String,
-        val score: Double
+        val score: String
     ): SearchResult()
 }
