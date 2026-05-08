@@ -1,7 +1,7 @@
-package com.kaszmir.githubsearch.autocomplete.di
+package com.kaszmir.githubsearch.feature.autocomplete.di
 
-import com.kaszmir.githubsearch.autocomplete.data.repository.RepositoryRepositoryImpl
-import com.kaszmir.githubsearch.autocomplete.domain.repository.RepositoryRepository
+import com.kaszmir.githubsearch.feature.autocomplete.data.repository.RepositoryRepositoryImpl
+import com.kaszmir.githubsearch.feature.autocomplete.domain.repository.RepositoryRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

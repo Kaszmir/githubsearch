@@ -1,4 +1,4 @@
-package com.kaszmir.githubsearch.autocomplete.presentation
+package com.kaszmir.githubsearch.feature.autocomplete.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -14,13 +14,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
-import com.kaszmir.githubsearch.autocomplete.domain.model.SearchResult
+import com.kaszmir.githubsearch.feature.autocomplete.domain.model.SearchResult
 
 @Composable
 fun SearchResultsDropdown(
     loading: Boolean,
     errorMessage: String?,
-    searchResults: List<SearchResult>,
+    searchResults: List<SearchResult>?,
     modifier: Modifier = Modifier
 ) {
     val shape = RoundedCornerShape(12.dp)
@@ -42,23 +42,34 @@ fun SearchResultsDropdown(
             item { SearchErrorState(errorMessage) }
             return@LazyColumn
         }
+
         if(loading) {
             items(15) {
                 SearchLoadingItem(isLoading = loading)
             }
-        }else {
-            items(searchResults) {
-                when(it) {
-                    is SearchResult.User -> SearchResultUserItem(
-                        userName = it.displayName,
-                        modifier = modifier
-                    )
-                    is SearchResult.Repository -> SearchResultRepoItem(
-                        repoName = it.displayName,
-                        repoScore = it.starsCount,
-                        modifier = modifier
-                    )
-                }
+            return@LazyColumn
+        }
+
+        if(searchResults == null) {
+            return@LazyColumn
+        }
+
+        if(searchResults.isEmpty()) {
+            item { SearchEmptyState() }
+            return@LazyColumn
+        }
+
+        items(searchResults) {
+            when(it) {
+                is SearchResult.User -> SearchResultUserItem(
+                    userName = it.displayName,
+                    modifier = modifier
+                )
+                is SearchResult.Repository -> SearchResultRepoItem(
+                    repoName = it.displayName,
+                    repoScore = it.starsCount,
+                    modifier = modifier
+                )
             }
         }
     }

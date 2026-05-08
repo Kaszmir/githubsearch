@@ -1,4 +1,4 @@
-package com.kaszmir.githubsearch.autocomplete.domain.model
+package com.kaszmir.githubsearch.feature.autocomplete.domain.model
 
 sealed class SearchResult {
     abstract val displayName: String

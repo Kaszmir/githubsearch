@@ -1,7 +1,7 @@
-package com.kaszmir.githubsearch.autocomplete.data
+package com.kaszmir.githubsearch.feature.autocomplete.data
 
-import com.kaszmir.githubsearch.autocomplete.data.model.GitHubRepositoriesResponseDto
-import com.kaszmir.githubsearch.autocomplete.data.model.GitHubUsersResponseDto
+import com.kaszmir.githubsearch.feature.autocomplete.data.model.GitHubRepositoriesResponseDto
+import com.kaszmir.githubsearch.feature.autocomplete.data.model.GitHubUsersResponseDto
 import retrofit2.http.GET
 import retrofit2.http.Query
 

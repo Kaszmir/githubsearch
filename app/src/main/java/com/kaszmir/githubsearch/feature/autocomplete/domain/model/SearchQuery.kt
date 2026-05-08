@@ -1,4 +1,4 @@
-package com.kaszmir.githubsearch.autocomplete.domain.model
+package com.kaszmir.githubsearch.feature.autocomplete.domain.model
 
 data class SearchQuery(
     val query: String,

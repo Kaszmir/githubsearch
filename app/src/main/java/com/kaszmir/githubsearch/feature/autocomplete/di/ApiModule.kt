@@ -1,6 +1,6 @@
-package com.kaszmir.githubsearch.autocomplete.di
+package com.kaszmir.githubsearch.feature.autocomplete.di
 
-import com.kaszmir.githubsearch.autocomplete.data.SearchApi
+import com.kaszmir.githubsearch.feature.autocomplete.data.SearchApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

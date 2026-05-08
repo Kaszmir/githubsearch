@@ -1,4 +1,4 @@
-package com.kaszmir.githubsearch.autocomplete.presentation
+package com.kaszmir.githubsearch.feature.autocomplete.presentation
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically

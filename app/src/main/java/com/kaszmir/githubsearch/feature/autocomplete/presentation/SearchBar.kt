@@ -1,4 +1,4 @@
-package com.kaszmir.githubsearch.autocomplete.presentation
+package com.kaszmir.githubsearch.feature.autocomplete.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

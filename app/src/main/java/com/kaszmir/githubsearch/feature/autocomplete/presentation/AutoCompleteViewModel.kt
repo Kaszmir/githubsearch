@@ -1,10 +1,10 @@
-package com.kaszmir.githubsearch.autocomplete.presentation
+package com.kaszmir.githubsearch.feature.autocomplete.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kaszmir.githubsearch.autocomplete.domain.SearchUseCase
-import com.kaszmir.githubsearch.autocomplete.domain.model.SearchQuery
-import com.kaszmir.githubsearch.autocomplete.domain.model.SearchResult
+import com.kaszmir.githubsearch.feature.autocomplete.domain.SearchUseCase
+import com.kaszmir.githubsearch.feature.autocomplete.domain.model.SearchQuery
+import com.kaszmir.githubsearch.feature.autocomplete.domain.model.SearchResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -20,7 +20,7 @@ import javax.inject.Inject
 
 data class AutoCompleteState(
     val query: String = "",
-    val searchResults: List<SearchResult> = emptyList(),
+    val searchResults: List<SearchResult>? = null,
     val isLoading: Boolean = false,
     val errorMessage: String? = null
 )
@@ -49,10 +49,10 @@ class AutoCompleteViewModel @Inject constructor(
         when(action) {
             is AutoCompleteAction.QueryChanged -> {
                 _queryFlow.value = action.query
-                _uiState.update { it.copy(query = action.query) }
+                _uiState.update { it.copy(query = action.query, errorMessage = null) }
             }
             is AutoCompleteAction.OnClear -> {
-                _uiState.update { it.copy(query = "", searchResults = emptyList()) }
+                _uiState.update { it.copy(query = "", searchResults = null, errorMessage = null) }
             }
         }
     }
@@ -73,7 +73,7 @@ class AutoCompleteViewModel @Inject constructor(
                             _uiState.update {
                                 it.copy(
                                     isLoading = false,
-                                    searchResults = emptyList(),
+                                    searchResults = null,
                                     errorMessage = error.message
                                 )
                             }

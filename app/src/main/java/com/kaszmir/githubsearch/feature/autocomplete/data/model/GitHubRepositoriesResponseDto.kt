@@ -1,6 +1,6 @@
-package com.kaszmir.githubsearch.autocomplete.data.model
+package com.kaszmir.githubsearch.feature.autocomplete.data.model
 
-import com.kaszmir.githubsearch.autocomplete.domain.model.SearchResult
+import com.kaszmir.githubsearch.feature.autocomplete.domain.model.SearchResult
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
