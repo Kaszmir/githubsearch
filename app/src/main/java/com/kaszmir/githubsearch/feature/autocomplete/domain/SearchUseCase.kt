@@ -2,7 +2,7 @@ package com.kaszmir.githubsearch.feature.autocomplete.domain
 
 import com.kaszmir.githubsearch.feature.autocomplete.domain.model.SearchQuery
 import com.kaszmir.githubsearch.feature.autocomplete.domain.model.SearchResult
-import com.kaszmir.githubsearch.feature.autocomplete.domain.repository.RepositoryRepository
+import com.kaszmir.githubsearch.feature.autocomplete.domain.repository.RepoRepository
 import com.kaszmir.githubsearch.feature.autocomplete.domain.repository.UserRepository
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -10,7 +10,7 @@ import javax.inject.Inject
 
 class SearchUseCase @Inject constructor(
     private val userRepository: UserRepository,
-    private val repoRepository: RepositoryRepository,
+    private val repoRepository: RepoRepository,
 ) {
     suspend operator fun invoke(query: SearchQuery): Result<List<SearchResult>> = coroutineScope {
         val users = async { userRepository.searchUsers(query) }

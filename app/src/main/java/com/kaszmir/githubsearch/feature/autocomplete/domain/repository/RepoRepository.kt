@@ -4,6 +4,6 @@ import com.kaszmir.githubsearch.feature.autocomplete.domain.model.SearchQuery
 import com.kaszmir.githubsearch.feature.autocomplete.domain.model.SearchResult
 
 
-interface RepositoryRepository {
+interface RepoRepository {
     suspend fun searchRepositories(query: SearchQuery): Result<List<SearchResult.Repository>>
 }

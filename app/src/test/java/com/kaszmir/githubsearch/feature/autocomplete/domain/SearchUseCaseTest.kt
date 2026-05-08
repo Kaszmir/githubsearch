@@ -2,7 +2,7 @@ package com.kaszmir.githubsearch.feature.autocomplete.domain
 
 import com.kaszmir.githubsearch.feature.autocomplete.domain.model.SearchQuery
 import com.kaszmir.githubsearch.feature.autocomplete.domain.model.SearchResult
-import com.kaszmir.githubsearch.feature.autocomplete.domain.repository.RepositoryRepository
+import com.kaszmir.githubsearch.feature.autocomplete.domain.repository.RepoRepository
 import com.kaszmir.githubsearch.feature.autocomplete.domain.repository.UserRepository
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -14,7 +14,7 @@ import org.junit.Test
 class SearchUseCaseTest {
 
     private val userRepository: UserRepository = mockk()
-    private val repoRepository: RepositoryRepository = mockk()
+    private val repoRepository: RepoRepository = mockk()
     private val useCase = SearchUseCase(userRepository, repoRepository)
 
     private val query = SearchQuery(query = "test")

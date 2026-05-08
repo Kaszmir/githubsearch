@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kaszmir.githubsearch.feature.autocomplete.domain.SearchUseCase
 import com.kaszmir.githubsearch.feature.autocomplete.domain.model.SearchQuery
-import com.kaszmir.githubsearch.feature.autocomplete.domain.model.SearchResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -17,18 +16,6 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
-
-data class AutoCompleteState(
-    val query: String = "",
-    val searchResults: List<SearchResult>? = null,
-    val isLoading: Boolean = false,
-    val errorMessage: String? = null
-)
-
-sealed interface AutoCompleteAction {
-    data class QueryChanged(val query: String): AutoCompleteAction
-    data object OnClear: AutoCompleteAction
-}
 
 @OptIn(FlowPreview::class)
 @HiltViewModel

@@ -5,15 +5,15 @@ import com.kaszmir.githubsearch.feature.autocomplete.data.SearchApi
 import com.kaszmir.githubsearch.feature.autocomplete.data.model.toDomain
 import com.kaszmir.githubsearch.feature.autocomplete.domain.model.SearchQuery
 import com.kaszmir.githubsearch.feature.autocomplete.domain.model.SearchResult
-import com.kaszmir.githubsearch.feature.autocomplete.domain.repository.RepositoryRepository
+import com.kaszmir.githubsearch.feature.autocomplete.domain.repository.RepoRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class RepositoryRepositoryImpl @Inject constructor(
+class RepoRepositoryImpl @Inject constructor(
     private val api: SearchApi,
     @param:IoDispatcher private val dispatcher: CoroutineDispatcher
-): RepositoryRepository {
+): RepoRepository {
     override suspend fun searchRepositories(query: SearchQuery): Result<List<SearchResult.Repository>> {
         return withContext(dispatcher) {
             try {

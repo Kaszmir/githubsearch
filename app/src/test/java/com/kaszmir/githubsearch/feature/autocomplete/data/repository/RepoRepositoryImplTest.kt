@@ -19,13 +19,13 @@ import retrofit2.Response
 import java.io.IOException
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class RepositoryRepositoryImplTest {
+class RepoRepositoryImplTest {
 
     private val api: SearchApi = mockk()
 
     // UnconfinedTestDispatcher because repos don't have
     // any debounce and time logic so this dispatcher usage is easier
-    private val repository = RepositoryRepositoryImpl(api, UnconfinedTestDispatcher())
+    private val repository = RepoRepositoryImpl(api, UnconfinedTestDispatcher())
 
     private val query = SearchQuery(query = "kotlin")
 
