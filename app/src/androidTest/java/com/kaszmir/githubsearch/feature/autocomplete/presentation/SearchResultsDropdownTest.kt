@@ -67,7 +67,7 @@ class SearchResultsDropdownTest {
     @Test
     fun showsUserItemsWhenSearchResultsContainsUsers() {
         val results = listOf(
-            SearchResult.User(id = 1, displayName = "kotlindev", pictureUrl = "")
+            SearchResult.User(id = 1, displayName = "testdev")
         )
         composeTestRule.setContent {
             MaterialTheme {
@@ -79,13 +79,13 @@ class SearchResultsDropdownTest {
             }
         }
 
-        composeTestRule.onNodeWithText("kotlindev").assertIsDisplayed()
+        composeTestRule.onNodeWithText("testdev").assertIsDisplayed()
     }
 
     @Test
     fun showsRepoItemsWhenSearchResultsContainsRepositories() {
         val results = listOf(
-            SearchResult.Repository(id = 1, displayName = "awesome-kotlin", starsCount = "100")
+            SearchResult.Repository(id = 1, displayName = "test-repository", starsCount = "100")
         )
         composeTestRule.setContent {
             MaterialTheme {
@@ -97,7 +97,7 @@ class SearchResultsDropdownTest {
             }
         }
 
-        composeTestRule.onNodeWithText("awesome-kotlin").assertIsDisplayed()
+        composeTestRule.onNodeWithText("test-repository").assertIsDisplayed()
         composeTestRule.onNodeWithText("100").assertIsDisplayed()
     }
 

@@ -19,7 +19,7 @@ class SearchUseCaseTest {
 
     private val query = SearchQuery(query = "test")
     private val fakeUsers = listOf(
-        SearchResult.User(id = 1, displayName = "badTestUser", pictureUrl = "")
+        SearchResult.User(id = 1, displayName = "badTestUser")
     )
     private val fakeRepositories = listOf(
         SearchResult.Repository(id = 2, displayName = "awesomeTestRepo", starsCount = "1000")

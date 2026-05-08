@@ -6,7 +6,6 @@ sealed class SearchResult {
     data class User(
         val id: Long,
         override val displayName: String,
-        val pictureUrl: String
     ): SearchResult()
 
     data class Repository(

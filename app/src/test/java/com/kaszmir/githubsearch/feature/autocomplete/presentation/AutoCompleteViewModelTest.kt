@@ -47,7 +47,7 @@ class AutoCompleteViewModelTest {
     private lateinit var viewModel: AutoCompleteViewModel
 
     private val fakeResults = listOf(
-        SearchResult.User(id = 1, displayName = "test", pictureUrl = "")
+        SearchResult.User(id = 1, displayName = "test")
     )
 
     @Before

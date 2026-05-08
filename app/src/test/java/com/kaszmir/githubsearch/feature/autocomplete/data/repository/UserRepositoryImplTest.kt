@@ -53,7 +53,6 @@ class UserRepositoryImplTest {
                 SearchResult.User(
                     id = 1,
                     displayName = "testdev",
-                    pictureUrl = "https://avatar.url"
                 )
             ),
             result.getOrNull()
