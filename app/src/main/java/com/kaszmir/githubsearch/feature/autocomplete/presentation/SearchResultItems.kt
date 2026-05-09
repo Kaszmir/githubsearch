@@ -1,6 +1,7 @@
 package com.kaszmir.githubsearch.feature.autocomplete.presentation
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -33,6 +34,7 @@ fun SearchResultUserItem(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .fillMaxWidth()
+            .clickable(true) {}
             .padding(horizontal = 12.dp, vertical = 12.dp)
     ) {
         Icon(
@@ -58,6 +60,7 @@ fun SearchResultRepoItem(
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
+            .clickable(true) {}
             .fillMaxWidth()
             .padding(horizontal = 12.dp, vertical = 12.dp)
     ) {
