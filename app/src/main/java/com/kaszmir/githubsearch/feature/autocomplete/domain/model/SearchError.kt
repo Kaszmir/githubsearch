@@ -1,6 +1,7 @@
 package com.kaszmir.githubsearch.feature.autocomplete.domain.model
 
 sealed interface SearchError {
+    data object BadCredentials: SearchError
     data object NoConnection : SearchError
     data object RateLimited : SearchError
     data object ServerError : SearchError

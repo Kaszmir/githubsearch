@@ -3,6 +3,7 @@ package com.kaszmir.githubsearch.feature.autocomplete.data.repository
 import com.kaszmir.githubsearch.core.di.IoDispatcher
 import com.kaszmir.githubsearch.feature.autocomplete.data.SearchApi
 import com.kaszmir.githubsearch.feature.autocomplete.data.model.toDomain
+import com.kaszmir.githubsearch.feature.autocomplete.data.resultsPerPage
 import com.kaszmir.githubsearch.feature.autocomplete.data.toSearchException
 import com.kaszmir.githubsearch.feature.autocomplete.domain.model.SearchResult
 import com.kaszmir.githubsearch.feature.autocomplete.domain.repository.RepoRepository
@@ -11,7 +12,6 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
 
-private const val resultPerPage = 50
 
 class RepoRepositoryImpl @Inject constructor(
     private val api: SearchApi,
@@ -23,7 +23,7 @@ class RepoRepositoryImpl @Inject constructor(
                 Result.success(
                     api.searchRepositories(
                         query = query,
-                        resultPerPage = resultPerPage
+                        resultPerPage = resultsPerPage
                     ).toDomain()
                 )
             } catch (e: CancellationException) {

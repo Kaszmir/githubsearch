@@ -13,6 +13,7 @@ internal fun Throwable.toSearchException(): SearchException = SearchException(
         is UnknownHostException, is SocketTimeoutException, is IOException ->
             SearchError.NoConnection
         is HttpException -> when (code()) {
+            401 -> SearchError.BadCredentials
             403, 429 -> SearchError.RateLimited
             in 500..599 -> SearchError.ServerError
             else -> SearchError.Unknown(this)

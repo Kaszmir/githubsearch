@@ -6,6 +6,9 @@ import org.junit.Test
 
 class SearchErrorUiMapperTest {
     @Test
+    fun `BadCredentials has user message`() =
+        assertEquals("Session expired", SearchError.BadCredentials.toMessage())
+    @Test
     fun `NoConnection has user message`() =
         assertEquals("No internet connection", SearchError.NoConnection.toMessage())
     @Test fun `RateLimited has user message`() =

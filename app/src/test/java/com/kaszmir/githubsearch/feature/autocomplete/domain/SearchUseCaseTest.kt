@@ -1,6 +1,9 @@
 package com.kaszmir.githubsearch.feature.autocomplete.domain
 
+import com.kaszmir.githubsearch.feature.autocomplete.domain.model.SearchError
+import com.kaszmir.githubsearch.feature.autocomplete.domain.model.SearchException
 import com.kaszmir.githubsearch.feature.autocomplete.domain.model.SearchResult
+import com.kaszmir.githubsearch.feature.autocomplete.domain.model.asSearchError
 import com.kaszmir.githubsearch.feature.autocomplete.domain.repository.RepoRepository
 import com.kaszmir.githubsearch.feature.autocomplete.domain.repository.UserRepository
 import io.mockk.coEvery
@@ -62,13 +65,15 @@ class SearchUseCaseTest {
 
     @Test
     fun `returns failure when both requests fail`() = runTest {
-        coEvery { userRepository.searchUsers(query) } returns Result.failure(Exception("users error"))
-        coEvery { repoRepository.searchRepositories(query) } returns Result.failure(Exception("repos error"))
+        coEvery { userRepository.searchUsers(query) } returns
+                Result.failure(SearchException(SearchError.NoConnection))
+        coEvery { repoRepository.searchRepositories(query) } returns
+                Result.failure(SearchException(SearchError.RateLimited))
 
         val result = useCase(query)
 
         assertTrue(result.isFailure)
-        assertEquals("users error", result.exceptionOrNull()?.message)
+        assertEquals(SearchError.NoConnection, result.exceptionOrNull()?.asSearchError())
     }
 
 }

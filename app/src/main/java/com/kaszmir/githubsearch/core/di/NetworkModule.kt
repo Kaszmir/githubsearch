@@ -1,7 +1,6 @@
-package com.kaszmir.githubsearch.core.network.di
+package com.kaszmir.githubsearch.core.di
 
 import com.kaszmir.githubsearch.BuildConfig
-import com.kaszmir.githubsearch.core.network.interceptor.AuthInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -27,15 +26,14 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(authInterceptor: AuthInterceptor): OkHttpClient {
+    fun provideOkHttpClient(): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor(
                 HttpLoggingInterceptor().apply {
                     level = if(BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY
                     else HttpLoggingInterceptor.Level.NONE
                 }
-            ).addInterceptor(authInterceptor)
-            .build()
+            ).build()
     }
 
     @Provides

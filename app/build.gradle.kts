@@ -1,6 +1,3 @@
-import java.util.Properties
-import kotlin.apply
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
@@ -25,8 +22,6 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
-        buildConfigField("String", "apikey", provideApiKey())
     }
 
     buildTypes {
@@ -46,14 +41,6 @@ android {
         buildConfig = true
         compose = true
     }
-}
-
-fun provideApiKey(): String {
-    val localProperties = Properties().apply {
-        val file = rootProject.file("local.properties")
-        if(file.exists()) load(file.inputStream())
-    }
-    return localProperties.getProperty("API_KEY", "")
 }
 
 dependencies {

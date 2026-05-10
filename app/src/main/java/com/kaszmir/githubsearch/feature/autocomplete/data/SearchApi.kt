@@ -5,6 +5,8 @@ import com.kaszmir.githubsearch.feature.autocomplete.data.model.GitHubUsersRespo
 import retrofit2.http.GET
 import retrofit2.http.Query
 
+internal const val resultsPerPage = 50
+
 interface SearchApi {
     @GET("search/users")
     suspend fun searchUsers(
