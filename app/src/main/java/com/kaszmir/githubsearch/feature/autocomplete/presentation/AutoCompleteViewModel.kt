@@ -34,7 +34,7 @@ class AutoCompleteViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(AutoCompleteState())
     val uiState = _uiState.asStateFlow()
 
-    private val _effects = MutableSharedFlow<AutoCompleteUiEffect>()
+    private val _effects = MutableSharedFlow<AutoCompleteUiEffect>(extraBufferCapacity = 1)
     val effects = _effects.asSharedFlow()
 
     private val _queryFlow = MutableStateFlow("")
@@ -100,6 +100,8 @@ class AutoCompleteViewModel @Inject constructor(
     }
 
     private fun handleResultClick(searchResult: SearchResult) {
+        if(searchResult.redirectUrl.isBlank()) return
+
         viewModelScope.launch {
             _effects.emit(
                 AutoCompleteUiEffect.OpenUrl(

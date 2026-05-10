@@ -14,7 +14,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import com.kaszmir.githubsearch.feature.autocomplete.domain.model.SearchResult
 
 @Composable
@@ -24,18 +27,21 @@ fun AutoCompleteWidget(
 ) {
     val state = viewModel.uiState.collectAsStateWithLifecycle()
     val uriHandler = LocalUriHandler.current
+    val lifecycleOwner = LocalLifecycleOwner.current
 
-    LaunchedEffect(Unit) {
-        viewModel.effects.collect { effect ->
-            when(effect) {
-                is AutoCompleteUiEffect.OpenUrl -> uriHandler.openUri(effect.url)
+    LaunchedEffect(viewModel.effects, lifecycleOwner) {
+        lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.effects.collect { effect ->
+                when (effect) {
+                    is AutoCompleteUiEffect.OpenUrl -> uriHandler.openUri(effect.url)
+                }
             }
         }
     }
 
     AutoCompleteLayout(
-        modifier = modifier,
         uiState = state.value,
+        modifier = modifier,
         queryTextChanged = { viewModel.onAction(AutoCompleteAction.QueryChanged(it)) },
         clearQueryClicked = { viewModel.onAction(AutoCompleteAction.OnClear) },
         onResultClicked = { viewModel.onAction(AutoCompleteAction.ResultClicked(it)) }
@@ -44,8 +50,8 @@ fun AutoCompleteWidget(
 
 @Composable
 private fun AutoCompleteLayout(
-    modifier: Modifier = Modifier,
     uiState: AutoCompleteState,
+    modifier: Modifier = Modifier,
     queryTextChanged: (String) -> Unit,
     clearQueryClicked: () -> Unit,
     onResultClicked: (SearchResult) -> Unit

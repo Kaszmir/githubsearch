@@ -27,8 +27,8 @@ import com.kaszmir.githubsearch.core.ui.shimmer
 
 @Composable
 fun SearchResultUserItem(
-    modifier: Modifier = Modifier,
     userName: String,
+    modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
 ) {
     Row(
@@ -54,9 +54,9 @@ fun SearchResultUserItem(
 
 @Composable
 fun SearchResultRepoItem(
-    modifier: Modifier = Modifier,
     repoName: String,
     repoScore: String,
+    modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
 ) {
     Row(

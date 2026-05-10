@@ -1,5 +1,6 @@
 package com.kaszmir.githubsearch.feature.autocomplete.presentation
 
+import app.cash.turbine.test
 import com.kaszmir.githubsearch.feature.autocomplete.domain.SearchUseCase
 import com.kaszmir.githubsearch.feature.autocomplete.domain.model.SearchError
 import com.kaszmir.githubsearch.feature.autocomplete.domain.model.SearchException
@@ -48,7 +49,7 @@ class AutoCompleteViewModelTest {
     private lateinit var viewModel: AutoCompleteViewModel
 
     private val fakeResults = listOf(
-        SearchResult.User(id = 1, displayName = "test")
+        SearchResult.User(id = 1, displayName = "test", redirectUrl = "http://gototheweb.com")
     )
 
     @Before
@@ -140,5 +141,46 @@ class AutoCompleteViewModelTest {
         assertNull(state.searchResults)
         assertNull(state.errorMessage)
         assertFalse(state.isLoading)
+    }
+
+    @Test
+    fun `ResultClicked emits OpenUrl effect with redirectUrl`() = runTest {
+        val user = SearchResult.User(
+            id = 1,
+            displayName = "octocat",
+            redirectUrl = "https://github.com/octocat",
+        )
+
+        viewModel.effects.test {
+            viewModel.onAction(AutoCompleteAction.ResultClicked(user))
+            val effect = awaitItem()
+            assertEquals(AutoCompleteUiEffect.OpenUrl("https://github.com/octocat"), effect)
+        }
+    }
+
+    @Test
+    fun `ResultClicked with Repository emits OpenUrl with repo url`() = runTest {
+        val repo = SearchResult.Repository(
+            id = 2,
+            displayName = "android",
+            starsCount = "100",
+            redirectUrl = "https://github.com/android/android",
+        )
+
+        viewModel.effects.test {
+            viewModel.onAction(AutoCompleteAction.ResultClicked(repo))
+            val effect = awaitItem()
+            assertEquals(AutoCompleteUiEffect.OpenUrl("https://github.com/android/android"), effect)
+        }
+    }
+
+    @Test
+    fun `ResultClicked with blank redirectUrl emits nothing`() = runTest {
+        val user = SearchResult.User(id = 1, displayName = "x", redirectUrl = "")
+
+        viewModel.effects.test {
+            viewModel.onAction(AutoCompleteAction.ResultClicked(user))
+            expectNoEvents()
+        }
     }
 }

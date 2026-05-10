@@ -38,7 +38,8 @@ class RepoRepositoryImplTest {
             GitHubRepositoryDto(
                 id = 1,
                 name = "awesome-kotlin",
-                stargazersCount = 100
+                stargazersCount = 100,
+                htmlUrl = "http://gototheweb.com"
             )
         )
     )
@@ -56,7 +57,9 @@ class RepoRepositoryImplTest {
             listOf(SearchResult.Repository(
                 id = 1,
                 displayName = "awesome-kotlin",
-                starsCount = "100")
+                starsCount = "100",
+                redirectUrl = "http://gototheweb.com"
+                )
             ),
             result.getOrNull()
         )

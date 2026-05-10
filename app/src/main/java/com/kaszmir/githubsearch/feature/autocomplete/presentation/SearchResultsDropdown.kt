@@ -21,8 +21,8 @@ fun SearchResultsDropdown(
     loading: Boolean,
     errorMessage: String?,
     searchResults: List<SearchResult>?,
-    onResultClicked: (SearchResult) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onResultClicked: (SearchResult) -> Unit = {},
 ) {
     val shape = RoundedCornerShape(12.dp)
     LazyColumn(

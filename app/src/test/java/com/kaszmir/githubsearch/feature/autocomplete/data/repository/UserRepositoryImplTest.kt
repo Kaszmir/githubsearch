@@ -38,7 +38,8 @@ class UserRepositoryImplTest {
             GitHubUserDto(
                 id = 1,
                 login = "testdev",
-                avatarUrl = "https://avatar.url"
+                avatarUrl = "https://avatar.url",
+                htmlUrl = "http://gototheweb.com"
             )
         )
     )
@@ -58,6 +59,7 @@ class UserRepositoryImplTest {
                 SearchResult.User(
                     id = 1,
                     displayName = "testdev",
+                    redirectUrl = "http://gototheweb.com"
                 )
             ),
             result.getOrNull()

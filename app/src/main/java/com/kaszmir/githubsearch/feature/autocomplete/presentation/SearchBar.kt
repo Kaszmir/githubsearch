@@ -36,9 +36,9 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun SearchBar(
     query: String,
+    modifier: Modifier = Modifier,
     onQueryChange: (String) -> Unit,
     onClear: () -> Unit,
-    modifier: Modifier = Modifier
 ) {
 
     // to remember focused state and set proper values

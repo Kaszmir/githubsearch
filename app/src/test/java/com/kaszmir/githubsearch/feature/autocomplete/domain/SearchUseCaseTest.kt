@@ -21,10 +21,19 @@ class SearchUseCaseTest {
 
     private val query = "test"
     private val fakeUsers = listOf(
-        SearchResult.User(id = 1, displayName = "badTestUser")
+        SearchResult.User(
+            id = 1,
+            displayName = "badTestUser",
+            redirectUrl = "http://gototheweb.com"
+        )
     )
     private val fakeRepositories = listOf(
-        SearchResult.Repository(id = 2, displayName = "awesomeTestRepo", starsCount = "1000")
+        SearchResult.Repository(
+            id = 2,
+            displayName = "awesomeTestRepo",
+            starsCount = "1000",
+            redirectUrl = "http://gototheweb.com"
+        )
     )
 
     @Test
@@ -44,12 +53,12 @@ class SearchUseCaseTest {
     @Test
     fun `sorts results case-insensitively across users and repos`() = runTest {
         val users = listOf(
-            SearchResult.User(id = 1, displayName = "cherry"),
-            SearchResult.User(id = 2, displayName = "Banana"),
+            SearchResult.User(id = 1, displayName = "cherry", redirectUrl = "http://gototheweb.com"),
+            SearchResult.User(id = 2, displayName = "Banana", redirectUrl = "http://gototheweb.com"),
         )
         val repos = listOf(
-            SearchResult.Repository(id = 10, displayName = "apple", starsCount = "1"),
-            SearchResult.Repository(id = 11, displayName = "Zoo",   starsCount = "1"),
+            SearchResult.Repository(id = 10, displayName = "apple", starsCount = "1", redirectUrl = "http://gototheweb.com"),
+            SearchResult.Repository(id = 11, displayName = "Zoo",   starsCount = "1", redirectUrl = "http://gototheweb.com"),
         )
         coEvery { userRepository.searchUsers(query) } returns Result.success(users)
         coEvery { repoRepository.searchRepositories(query) } returns Result.success(repos)
