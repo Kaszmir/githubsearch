@@ -22,7 +22,6 @@ class SearchUseCase @Inject constructor(
             Result.failure(userResults.exceptionOrNull() ?: Exception("Both requests failed"))
         } else {
             val userList = userResults.getOrElse { emptyList() }
-            userList
             val repoList = repoResults.getOrElse { emptyList() }
             Result.success((userList + repoList).sortedBy { it.displayName })
         }
