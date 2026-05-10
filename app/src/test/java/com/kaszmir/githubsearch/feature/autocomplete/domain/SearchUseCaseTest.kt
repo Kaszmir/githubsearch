@@ -73,7 +73,7 @@ class SearchUseCaseTest {
 
     @Test
     fun `returns only repos when users request fails`() = runTest {
-        coEvery { userRepository.searchUsers(query) } returns Result.failure(Exception("error"))
+        coEvery { userRepository.searchUsers(query) } returns Result.failure(SearchException(SearchError.NoConnection))
         coEvery { repoRepository.searchRepositories(query) } returns Result.success(fakeRepositories)
 
         val result = useCase(query)
@@ -85,7 +85,7 @@ class SearchUseCaseTest {
     @Test
     fun `returns only users when repos request fails`() = runTest {
         coEvery { userRepository.searchUsers(query) } returns Result.success(fakeUsers)
-        coEvery { repoRepository.searchRepositories(query) } returns Result.failure(Exception("error"))
+        coEvery { repoRepository.searchRepositories(query) } returns Result.failure(SearchException(SearchError.NoConnection))
 
         val result = useCase(query)
 

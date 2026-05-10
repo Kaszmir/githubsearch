@@ -51,10 +51,10 @@ fun AutoCompleteWidget(
 @Composable
 private fun AutoCompleteLayout(
     uiState: AutoCompleteState,
-    modifier: Modifier = Modifier,
     queryTextChanged: (String) -> Unit,
     clearQueryClicked: () -> Unit,
-    onResultClicked: (SearchResult) -> Unit
+    onResultClicked: (SearchResult) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier
         .fillMaxSize()
