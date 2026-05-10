@@ -42,6 +42,27 @@ class SearchUseCaseTest {
     }
 
     @Test
+    fun `sorts results case-insensitively across users and repos`() = runTest {
+        val users = listOf(
+            SearchResult.User(id = 1, displayName = "cherry"),
+            SearchResult.User(id = 2, displayName = "Banana"),
+        )
+        val repos = listOf(
+            SearchResult.Repository(id = 10, displayName = "apple", starsCount = "1"),
+            SearchResult.Repository(id = 11, displayName = "Zoo",   starsCount = "1"),
+        )
+        coEvery { userRepository.searchUsers(query) } returns Result.success(users)
+        coEvery { repoRepository.searchRepositories(query) } returns Result.success(repos)
+
+        val result = useCase(query)
+
+        assertEquals(
+            listOf("apple", "Banana", "cherry", "Zoo"),
+            result.getOrNull()?.map { it.displayName },
+        )
+    }
+
+    @Test
     fun `returns only repos when users request fails`() = runTest {
         coEvery { userRepository.searchUsers(query) } returns Result.failure(Exception("error"))
         coEvery { repoRepository.searchRepositories(query) } returns Result.success(fakeRepositories)

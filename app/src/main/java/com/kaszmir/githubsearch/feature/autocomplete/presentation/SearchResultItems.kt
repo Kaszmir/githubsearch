@@ -34,7 +34,6 @@ fun SearchResultUserItem(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .fillMaxWidth()
-            .clickable(true) {}
             .padding(horizontal = 12.dp, vertical = 12.dp)
     ) {
         Icon(
@@ -60,7 +59,6 @@ fun SearchResultRepoItem(
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
-            .clickable(true) {}
             .fillMaxWidth()
             .padding(horizontal = 12.dp, vertical = 12.dp)
     ) {
