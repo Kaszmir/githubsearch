@@ -27,13 +27,15 @@ import com.kaszmir.githubsearch.core.ui.shimmer
 
 @Composable
 fun SearchResultUserItem(
+    modifier: Modifier = Modifier,
     userName: String,
-    modifier: Modifier
+    onClick: () -> Unit = {},
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .fillMaxWidth()
+            .clickable(onClick = onClick)
             .padding(horizontal = 12.dp, vertical = 12.dp)
     ) {
         Icon(
@@ -52,13 +54,15 @@ fun SearchResultUserItem(
 
 @Composable
 fun SearchResultRepoItem(
+    modifier: Modifier = Modifier,
     repoName: String,
     repoScore: String,
-    modifier: Modifier
+    onClick: () -> Unit = {},
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
+            .clickable(onClick = onClick)
             .fillMaxWidth()
             .padding(horizontal = 12.dp, vertical = 12.dp)
     ) {

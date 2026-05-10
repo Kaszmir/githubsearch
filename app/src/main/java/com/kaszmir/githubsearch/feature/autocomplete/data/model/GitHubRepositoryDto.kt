@@ -33,4 +33,9 @@ data class GitHubRepositoryDto(
     val license: GitHubLicenseDto? = null
 )
 fun GitHubRepositoryDto.toDomain() =
-    SearchResult.Repository(id = id, displayName = name, starsCount = "$stargazersCount")
+    SearchResult.Repository(
+        id = id,
+        displayName = name,
+        starsCount = "$stargazersCount",
+        redirectUrl = htmlUrl,
+    )

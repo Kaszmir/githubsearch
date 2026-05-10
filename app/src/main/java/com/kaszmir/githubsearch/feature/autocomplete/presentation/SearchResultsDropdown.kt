@@ -21,6 +21,7 @@ fun SearchResultsDropdown(
     loading: Boolean,
     errorMessage: String?,
     searchResults: List<SearchResult>?,
+    onResultClicked: (SearchResult) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val shape = RoundedCornerShape(12.dp)
@@ -59,16 +60,24 @@ fun SearchResultsDropdown(
             return@LazyColumn
         }
 
-        items(searchResults) {
+        items(
+            items = searchResults,
+            key = { result ->
+                when (result) {
+                    is SearchResult.User -> "user_${result.id}"
+                    is SearchResult.Repository -> "repo_${result.id}"
+                }
+            },
+        ) {
             when(it) {
                 is SearchResult.User -> SearchResultUserItem(
                     userName = it.displayName,
-                    modifier = modifier
+                    onClick = { onResultClicked(it) },
                 )
                 is SearchResult.Repository -> SearchResultRepoItem(
                     repoName = it.displayName,
                     repoScore = it.starsCount,
-                    modifier = modifier
+                    onClick = { onResultClicked(it) },
                 )
             }
         }

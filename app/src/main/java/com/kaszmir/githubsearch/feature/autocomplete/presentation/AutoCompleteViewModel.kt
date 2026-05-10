@@ -3,8 +3,7 @@ package com.kaszmir.githubsearch.feature.autocomplete.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kaszmir.githubsearch.feature.autocomplete.domain.SearchUseCase
-import com.kaszmir.githubsearch.feature.autocomplete.domain.model.SearchError
-import com.kaszmir.githubsearch.feature.autocomplete.domain.model.SearchException
+import com.kaszmir.githubsearch.feature.autocomplete.domain.model.SearchResult
 import com.kaszmir.githubsearch.feature.autocomplete.domain.model.asSearchError
 import com.kaszmir.githubsearch.feature.autocomplete.presentation.AutoCompleteState.Companion.DEBOUNCE_VALUE
 import com.kaszmir.githubsearch.feature.autocomplete.presentation.AutoCompleteState.Companion.MIN_QUERY_LENGTH
@@ -12,7 +11,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.filter
@@ -33,6 +34,9 @@ class AutoCompleteViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(AutoCompleteState())
     val uiState = _uiState.asStateFlow()
 
+    private val _effects = MutableSharedFlow<AutoCompleteUiEffect>()
+    val effects = _effects.asSharedFlow()
+
     private val _queryFlow = MutableStateFlow("")
 
     init {
@@ -43,6 +47,7 @@ class AutoCompleteViewModel @Inject constructor(
         when (action) {
             is AutoCompleteAction.QueryChanged -> onQueryChanged(action.query)
             is AutoCompleteAction.OnClear -> resetSearch("")
+            is AutoCompleteAction.ResultClicked -> handleResultClick(action.searchResult)
         }
     }
 
@@ -90,6 +95,16 @@ class AutoCompleteViewModel @Inject constructor(
                 searchResults = null,
                 errorMessage = null,
                 isLoading = false
+            )
+        }
+    }
+
+    private fun handleResultClick(searchResult: SearchResult) {
+        viewModelScope.launch {
+            _effects.emit(
+                AutoCompleteUiEffect.OpenUrl(
+                    url = searchResult.redirectUrl
+                )
             )
         }
     }

@@ -9,10 +9,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.kaszmir.githubsearch.feature.autocomplete.domain.model.SearchResult
 
 @Composable
 fun AutoCompleteWidget(
@@ -20,11 +23,22 @@ fun AutoCompleteWidget(
     viewModel: AutoCompleteViewModel = hiltViewModel(),
 ) {
     val state = viewModel.uiState.collectAsStateWithLifecycle()
+    val uriHandler = LocalUriHandler.current
+
+    LaunchedEffect(Unit) {
+        viewModel.effects.collect { effect ->
+            when(effect) {
+                is AutoCompleteUiEffect.OpenUrl -> uriHandler.openUri(effect.url)
+            }
+        }
+    }
+
     AutoCompleteLayout(
+        modifier = modifier,
         uiState = state.value,
         queryTextChanged = { viewModel.onAction(AutoCompleteAction.QueryChanged(it)) },
         clearQueryClicked = { viewModel.onAction(AutoCompleteAction.OnClear) },
-        modifier = modifier
+        onResultClicked = { viewModel.onAction(AutoCompleteAction.ResultClicked(it)) }
     )
 }
 
@@ -34,6 +48,7 @@ private fun AutoCompleteLayout(
     uiState: AutoCompleteState,
     queryTextChanged: (String) -> Unit,
     clearQueryClicked: () -> Unit,
+    onResultClicked: (SearchResult) -> Unit
 ) {
     Column(modifier = modifier
         .fillMaxSize()
@@ -54,7 +69,8 @@ private fun AutoCompleteLayout(
                 loading = uiState.isLoading,
                 errorMessage = uiState.errorMessage,
                 searchResults = uiState.searchResults,
-                modifier = Modifier.padding(bottom = 8.dp)
+                modifier = Modifier.padding(bottom = 8.dp),
+                onResultClicked = onResultClicked
             )
         }
     }

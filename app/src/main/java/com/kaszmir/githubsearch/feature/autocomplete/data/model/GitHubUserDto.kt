@@ -18,4 +18,5 @@ data class GitHubUserDto(
 fun GitHubUserDto.toDomain() = SearchResult.User(
     id = id,
     displayName = login,
+    redirectUrl = htmlUrl,
 )
