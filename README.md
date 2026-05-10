@@ -9,7 +9,7 @@ coroutines + Flow.
 
 ## How to run
 
-Open in Android Studio and run the `app` configuration (minSdk 24), or:
+Open in Android Studio and run the app
 
 No configuration required — the app calls the public GitHub API anonymously                                                                                                                                                                      
 (60 req/h rate limit).
