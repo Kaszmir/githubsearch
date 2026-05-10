@@ -7,4 +7,13 @@ data class AutoCompleteState(
     val searchResults: List<SearchResult>? = null,
     val isLoading: Boolean = false,
     val errorMessage: String? = null
-)
+) {
+    val shouldShowDropDown: Boolean
+        get() = query.length >= MIN_QUERY_LENGTH
+
+
+    companion object {
+        const val MIN_QUERY_LENGTH = 3
+        const val DEBOUNCE_VALUE = 300L
+    }
+}

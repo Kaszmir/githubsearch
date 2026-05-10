@@ -3,18 +3,23 @@ package com.kaszmir.githubsearch.feature.autocomplete.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kaszmir.githubsearch.feature.autocomplete.domain.SearchUseCase
-import com.kaszmir.githubsearch.feature.autocomplete.domain.model.SearchQuery
+import com.kaszmir.githubsearch.feature.autocomplete.domain.model.SearchError
+import com.kaszmir.githubsearch.feature.autocomplete.domain.model.SearchException
+import com.kaszmir.githubsearch.feature.autocomplete.domain.model.asSearchError
+import com.kaszmir.githubsearch.feature.autocomplete.presentation.AutoCompleteState.Companion.DEBOUNCE_VALUE
+import com.kaszmir.githubsearch.feature.autocomplete.presentation.AutoCompleteState.Companion.MIN_QUERY_LENGTH
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @OptIn(FlowPreview::class)
@@ -22,6 +27,8 @@ import javax.inject.Inject
 class AutoCompleteViewModel @Inject constructor(
     private val useCase: SearchUseCase
 ): ViewModel() {
+
+    private var searchJob: Job? = null
 
     private val _uiState = MutableStateFlow(AutoCompleteState())
     val uiState = _uiState.asStateFlow()
@@ -33,26 +40,22 @@ class AutoCompleteViewModel @Inject constructor(
     }
 
     fun onAction(action: AutoCompleteAction) {
-        when(action) {
-            is AutoCompleteAction.QueryChanged -> {
-                _queryFlow.value = action.query
-                _uiState.update { it.copy(query = action.query, errorMessage = null) }
-            }
-            is AutoCompleteAction.OnClear -> {
-                _uiState.update { it.copy(query = "", searchResults = null, errorMessage = null) }
-            }
+        when (action) {
+            is AutoCompleteAction.QueryChanged -> onQueryChanged(action.query)
+            is AutoCompleteAction.OnClear -> resetSearch("")
         }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun observeQuery() {
         _queryFlow
-            .debounce(300)
-            .filter { it.length >= 3 }
-            .flatMapLatest { query ->
-                flow<Unit> {
+            .debounce(DEBOUNCE_VALUE)
+            .filter { it.length >= MIN_QUERY_LENGTH }
+            .onEach { query ->
+                searchJob?.cancel()
+                searchJob = viewModelScope.launch {
                     _uiState.update { it.copy(isLoading = true) }
-                    useCase(SearchQuery(query = query))
+                    useCase(query = query)
                         .onSuccess { result ->
                             _uiState.update { it.copy(isLoading = false, searchResults = result) }
                         }
@@ -61,11 +64,33 @@ class AutoCompleteViewModel @Inject constructor(
                                 it.copy(
                                     isLoading = false,
                                     searchResults = null,
-                                    errorMessage = error.message
+                                    errorMessage = error.asSearchError().toMessage(),
                                 )
                             }
                         }
                 }
             }.launchIn(viewModelScope)
+    }
+
+    private fun onQueryChanged(query: String) {
+        if (query.length < MIN_QUERY_LENGTH) {
+            resetSearch(query)
+        } else {
+            _queryFlow.value = query
+            _uiState.update { it.copy(query = query, errorMessage = null) }
+        }
+    }
+
+    private fun resetSearch(query: String) {
+        searchJob?.cancel()
+        _queryFlow.value = query
+        _uiState.update {
+            it.copy(
+                query = query,
+                searchResults = null,
+                errorMessage = null,
+                isLoading = false
+            )
+        }
     }
 }

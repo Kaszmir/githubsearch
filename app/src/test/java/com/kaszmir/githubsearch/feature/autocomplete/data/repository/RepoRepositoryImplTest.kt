@@ -3,7 +3,8 @@ package com.kaszmir.githubsearch.feature.autocomplete.data.repository
 import com.kaszmir.githubsearch.feature.autocomplete.data.SearchApi
 import com.kaszmir.githubsearch.feature.autocomplete.data.model.GitHubRepositoriesResponseDto
 import com.kaszmir.githubsearch.feature.autocomplete.data.model.GitHubRepositoryDto
-import com.kaszmir.githubsearch.feature.autocomplete.domain.model.SearchQuery
+import com.kaszmir.githubsearch.feature.autocomplete.domain.model.SearchError
+import com.kaszmir.githubsearch.feature.autocomplete.domain.model.SearchException
 import com.kaszmir.githubsearch.feature.autocomplete.domain.model.SearchResult
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -27,7 +28,8 @@ class RepoRepositoryImplTest {
     // any debounce and time logic so this dispatcher usage is easier
     private val repository = RepoRepositoryImpl(api, UnconfinedTestDispatcher())
 
-    private val query = SearchQuery(query = "kotlin")
+    private val query = "kotlin"
+    private val resultsPerPage = 50
 
     private val fakeResponse = GitHubRepositoriesResponseDto(
         totalCount = 1,
@@ -44,7 +46,7 @@ class RepoRepositoryImplTest {
     @Test
     fun `returns success with mapped results when api call succeeds`() = runTest {
         coEvery {
-            api.searchRepositories(query.query, query.resultsPerPage)
+            api.searchRepositories(query, resultsPerPage)
         } returns fakeResponse
 
         val result = repository.searchRepositories(query)
@@ -61,36 +63,42 @@ class RepoRepositoryImplTest {
     }
 
     @Test
-    fun `returns failure when api throws IOException`() = runTest {
+    fun `returns SearchErrorNoConnection when api throws IOException`() = runTest {
         coEvery {
-            api.searchRepositories(query.query, query.resultsPerPage)
+            api.searchRepositories(query, resultsPerPage)
         } throws IOException("no internet")
 
         val result = repository.searchRepositories(query)
 
         assertTrue(result.isFailure)
-        assertEquals("no internet", result.exceptionOrNull()?.message)
+        assertEquals(
+            SearchError.NoConnection,
+            (result.exceptionOrNull() as SearchException).error
+        )
     }
 
     @Test
-    fun `returns failure when api throws HttpException`() = runTest {
+    fun `returns SearchErrorRateLimited when api throws HttpException`() = runTest {
         val httpException = HttpException(
             Response.error<Any>(403, "Forbidden".toResponseBody())
         )
         coEvery {
-            api.searchRepositories(query.query, query.resultsPerPage)
+            api.searchRepositories(query, resultsPerPage)
         } throws httpException
 
         val result = repository.searchRepositories(query)
 
         assertTrue(result.isFailure)
-        assertTrue(result.exceptionOrNull() is HttpException)
+        assertEquals(
+            SearchError.RateLimited,
+            (result.exceptionOrNull() as SearchException).error
+        )
     }
 
     @Test
     fun `returns empty list when api returns no items`() = runTest {
         coEvery {
-            api.searchRepositories(query.query, query.resultsPerPage)
+            api.searchRepositories(query, resultsPerPage)
         } returns GitHubRepositoriesResponseDto()
 
         val result = repository.searchRepositories(query)

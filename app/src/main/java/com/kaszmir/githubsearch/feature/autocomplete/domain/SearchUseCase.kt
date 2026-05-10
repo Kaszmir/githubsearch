@@ -1,6 +1,5 @@
 package com.kaszmir.githubsearch.feature.autocomplete.domain
 
-import com.kaszmir.githubsearch.feature.autocomplete.domain.model.SearchQuery
 import com.kaszmir.githubsearch.feature.autocomplete.domain.model.SearchResult
 import com.kaszmir.githubsearch.feature.autocomplete.domain.repository.RepoRepository
 import com.kaszmir.githubsearch.feature.autocomplete.domain.repository.UserRepository
@@ -12,7 +11,7 @@ class SearchUseCase @Inject constructor(
     private val userRepository: UserRepository,
     private val repoRepository: RepoRepository,
 ) {
-    suspend operator fun invoke(query: SearchQuery): Result<List<SearchResult>> = coroutineScope {
+    suspend operator fun invoke(query: String): Result<List<SearchResult>> = coroutineScope {
         val users = async { userRepository.searchUsers(query) }
         val repos = async { repoRepository.searchRepositories(query) }
 
@@ -23,6 +22,7 @@ class SearchUseCase @Inject constructor(
             Result.failure(userResults.exceptionOrNull() ?: Exception("Both requests failed"))
         } else {
             val userList = userResults.getOrElse { emptyList() }
+            userList
             val repoList = repoResults.getOrElse { emptyList() }
             Result.success((userList + repoList).sortedBy { it.displayName })
         }

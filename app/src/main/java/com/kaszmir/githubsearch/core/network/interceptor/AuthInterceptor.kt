@@ -5,7 +5,7 @@ import jakarta.inject.Inject
 import okhttp3.Interceptor
 import okhttp3.Response
 
-private const val tokenHeaderField = "x-subscription-token"
+private const val tokenHeaderField = "Authorization_ifyouhavetoken"
 
 class AuthInterceptor @Inject constructor(): Interceptor {
 

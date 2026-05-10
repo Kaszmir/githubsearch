@@ -1,6 +1,5 @@
 package com.kaszmir.githubsearch.feature.autocomplete.domain
 
-import com.kaszmir.githubsearch.feature.autocomplete.domain.model.SearchQuery
 import com.kaszmir.githubsearch.feature.autocomplete.domain.model.SearchResult
 import com.kaszmir.githubsearch.feature.autocomplete.domain.repository.RepoRepository
 import com.kaszmir.githubsearch.feature.autocomplete.domain.repository.UserRepository
@@ -17,7 +16,7 @@ class SearchUseCaseTest {
     private val repoRepository: RepoRepository = mockk()
     private val useCase = SearchUseCase(userRepository, repoRepository)
 
-    private val query = SearchQuery(query = "test")
+    private val query = "test"
     private val fakeUsers = listOf(
         SearchResult.User(id = 1, displayName = "badTestUser")
     )

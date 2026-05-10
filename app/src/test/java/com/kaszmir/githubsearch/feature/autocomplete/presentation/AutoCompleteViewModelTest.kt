@@ -1,7 +1,8 @@
 package com.kaszmir.githubsearch.feature.autocomplete.presentation
 
 import com.kaszmir.githubsearch.feature.autocomplete.domain.SearchUseCase
-import com.kaszmir.githubsearch.feature.autocomplete.domain.model.SearchQuery
+import com.kaszmir.githubsearch.feature.autocomplete.domain.model.SearchError
+import com.kaszmir.githubsearch.feature.autocomplete.domain.model.SearchException
 import com.kaszmir.githubsearch.feature.autocomplete.domain.model.SearchResult
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -80,7 +81,7 @@ class AutoCompleteViewModelTest {
         viewModel.onAction(AutoCompleteAction.QueryChanged("tes"))
         advanceTimeBy(400)
 
-        coVerify(exactly = 1) { useCase(SearchQuery(query = "tes")) }
+        coVerify(exactly = 1) { useCase(query = "tes") }
         assertEquals(fakeResults, viewModel.uiState.value.searchResults)
         assertFalse(viewModel.uiState.value.isLoading)
     }
@@ -94,18 +95,20 @@ class AutoCompleteViewModelTest {
         viewModel.onAction(AutoCompleteAction.QueryChanged("test"))
         advanceTimeBy(400) // this query should pass
 
-        coVerify(exactly = 1) { useCase(SearchQuery(query = "test")) } // use case should be called only once
+        coVerify(exactly = 1) { useCase(query = "test") } // use case should be called only once
     }
 
     @Test
     fun `error state is set when use case fails`() = runTest {
-        coEvery { useCase(any()) } returns Result.failure(Exception("error"))
+        coEvery { useCase(any()) } returns Result.failure(
+            SearchException(SearchError.RateLimited)
+        )
 
         viewModel.onAction(AutoCompleteAction.QueryChanged("test"))
         advanceTimeBy(400)
 
         assertNull(viewModel.uiState.value.searchResults)
-        assertEquals("error", viewModel.uiState.value.errorMessage)
+        assertEquals("GitHub API rate limit exceeded", viewModel.uiState.value.errorMessage)
     }
 
     @Test
@@ -120,5 +123,22 @@ class AutoCompleteViewModelTest {
         assertEquals("", state.query)
         assertNull(state.searchResults)
         assertNull(state.errorMessage)
+    }
+
+    @Test
+    fun `shortening query below threshold clears stale results`() = runTest {
+        coEvery { useCase(any()) } returns Result.success(fakeResults)
+
+        viewModel.onAction(AutoCompleteAction.QueryChanged("test"))
+        advanceTimeBy(400)
+        assertEquals(fakeResults, viewModel.uiState.value.searchResults)
+
+        viewModel.onAction(AutoCompleteAction.QueryChanged("te"))
+
+        val state = viewModel.uiState.value
+        assertEquals("te", state.query)
+        assertNull(state.searchResults)
+        assertNull(state.errorMessage)
+        assertFalse(state.isLoading)
     }
 }

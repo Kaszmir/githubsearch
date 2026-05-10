@@ -16,8 +16,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 @Composable
 fun AutoCompleteWidget(
+    modifier: Modifier = Modifier,
     viewModel: AutoCompleteViewModel = hiltViewModel(),
-    modifier: Modifier
 ) {
     val state = viewModel.uiState.collectAsStateWithLifecycle()
     AutoCompleteLayout(
@@ -30,10 +30,10 @@ fun AutoCompleteWidget(
 
 @Composable
 private fun AutoCompleteLayout(
+    modifier: Modifier = Modifier,
     uiState: AutoCompleteState,
     queryTextChanged: (String) -> Unit,
     clearQueryClicked: () -> Unit,
-    modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier
         .fillMaxSize()
@@ -45,10 +45,8 @@ private fun AutoCompleteLayout(
             onClear = clearQueryClicked
         )
 
-        val showResults = uiState.query.isNotEmpty()
-
         AnimatedVisibility(
-            visible = showResults,
+            visible = uiState.shouldShowDropDown,
             enter = fadeIn() + expandVertically(),
             exit = fadeOut() + shrinkVertically()
         ) {
