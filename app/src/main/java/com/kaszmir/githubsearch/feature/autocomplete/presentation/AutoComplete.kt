@@ -1,5 +1,6 @@
 package com.kaszmir.githubsearch.feature.autocomplete.presentation
 
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -10,8 +11,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -25,35 +28,35 @@ fun AutoCompleteWidget(
     modifier: Modifier = Modifier,
     viewModel: AutoCompleteViewModel = hiltViewModel(),
 ) {
-    val state = viewModel.uiState.collectAsStateWithLifecycle()
-    val uriHandler = LocalUriHandler.current
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
+    val context = LocalContext.current
 
-    LaunchedEffect(viewModel.effects, lifecycleOwner) {
+    LaunchedEffect(Unit) {
         lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.effects.collect { effect ->
-                when (effect) {
-                    is AutoCompleteUiEffect.OpenUrl -> uriHandler.openUri(effect.url)
+                when(effect) {
+                    is AutoCompleteUiEffect.OpenUrlFailed -> {
+                        Toast.makeText(
+                            context, "Can't open the URL", Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
             }
         }
     }
 
     AutoCompleteLayout(
-        uiState = state.value,
+        uiState = state,
         modifier = modifier,
-        queryTextChanged = { viewModel.onAction(AutoCompleteAction.QueryChanged(it)) },
-        clearQueryClicked = { viewModel.onAction(AutoCompleteAction.OnClear) },
-        onResultClicked = { viewModel.onAction(AutoCompleteAction.ResultClicked(it)) }
+        onAction = { viewModel.onAction(it) },
     )
 }
 
 @Composable
 private fun AutoCompleteLayout(
     uiState: AutoCompleteState,
-    queryTextChanged: (String) -> Unit,
-    clearQueryClicked: () -> Unit,
-    onResultClicked: (SearchResult) -> Unit,
+    onAction: (AutoCompleteAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier
@@ -62,8 +65,8 @@ private fun AutoCompleteLayout(
     ) {
         SearchBar(
             query = uiState.query,
-            onQueryChange = queryTextChanged,
-            onClear = clearQueryClicked
+            onQueryChange = { onAction(AutoCompleteAction.QueryChanged(it)) },
+            onClear = { onAction(AutoCompleteAction.OnClear) }
         )
 
         AnimatedVisibility(
@@ -76,8 +79,49 @@ private fun AutoCompleteLayout(
                 errorMessage = uiState.errorMessage,
                 searchResults = uiState.searchResults,
                 modifier = Modifier.padding(bottom = 8.dp),
-                onResultClicked = onResultClicked
+                onResultClicked = { onAction(AutoCompleteAction.ResultClicked(it)) }
             )
         }
     }
 }
+
+@Preview
+@Composable
+private fun AutoCompleteLayoutIdlePreview() {
+    AutoCompleteLayout(
+        uiState = AutoCompleteState(),
+        onAction = {}
+    )
+}
+
+@Preview
+@Composable
+private fun AutoCompleteLayoutLoadingPreview() {
+    AutoCompleteLayout(
+        uiState = AutoCompleteState(query = "test", isLoading = true),
+        onAction = {}
+    )
+}
+
+@Preview
+@Composable
+private fun AutoCompleteLayoutEmptyPreview() {
+    AutoCompleteLayout(
+        uiState = AutoCompleteState(query = "test", isLoading = false, searchResults = emptyList()),
+        onAction = {}
+    )
+}
+
+@Preview
+@Composable
+private fun AutoCompleteLayoutWithResultsPreview() {
+    AutoCompleteLayout(
+        uiState = AutoCompleteState(query = "test", isLoading = false, searchResults = searchResultList),
+        onAction = {}
+    )
+}
+
+private val searchResultList = listOf(
+    SearchResult.User(1, "test_user", "noone"),
+    SearchResult.Repository(2, "test_repo", "1000", ""),
+)

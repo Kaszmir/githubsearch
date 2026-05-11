@@ -1,12 +1,14 @@
 package com.kaszmir.githubsearch.feature.autocomplete.presentation
 
 import app.cash.turbine.test
+import com.kaszmir.githubsearch.core.system.UrlOpener
 import com.kaszmir.githubsearch.feature.autocomplete.domain.SearchUseCase
 import com.kaszmir.githubsearch.feature.autocomplete.domain.model.SearchError
 import com.kaszmir.githubsearch.feature.autocomplete.domain.model.SearchException
 import com.kaszmir.githubsearch.feature.autocomplete.domain.model.SearchResult
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertFalse
@@ -46,6 +48,7 @@ class AutoCompleteViewModelTest {
     val mainDispatcherRule = MainDispatcherRule()
 
     private val useCase: SearchUseCase = mockk()
+    private val urlOpener: UrlOpener = mockk()
     private lateinit var viewModel: AutoCompleteViewModel
 
     private val fakeResults = listOf(
@@ -54,7 +57,7 @@ class AutoCompleteViewModelTest {
 
     @Before
     fun setUp() {
-        viewModel = AutoCompleteViewModel(useCase)
+        viewModel = AutoCompleteViewModel(useCase, urlOpener)
     }
 
     @Test
@@ -144,33 +147,38 @@ class AutoCompleteViewModelTest {
     }
 
     @Test
-    fun `ResultClicked emits OpenUrl effect with redirectUrl`() = runTest {
-        val user = SearchResult.User(
-            id = 1,
-            displayName = "octocat",
-            redirectUrl = "https://github.com/octocat",
-        )
+    fun `ResultClicked emits OpenUrlFailed when opener fails`() = runTest {
+        every { urlOpener.open(any()) } returns false
 
         viewModel.effects.test {
-            viewModel.onAction(AutoCompleteAction.ResultClicked(user))
-            val effect = awaitItem()
-            assertEquals(AutoCompleteUiEffect.OpenUrl("https://github.com/octocat"), effect)
+            viewModel.onAction(
+                AutoCompleteAction.ResultClicked(
+                    SearchResult.User(
+                        id = 1,
+                        displayName = "test-user",
+                        redirectUrl = "https://github.com/testuser",
+                    )
+                )
+            )
+            assertEquals(AutoCompleteUiEffect.OpenUrlFailed, awaitItem())
         }
     }
 
     @Test
-    fun `ResultClicked with Repository emits OpenUrl with repo url`() = runTest {
-        val repo = SearchResult.Repository(
-            id = 2,
-            displayName = "android",
-            starsCount = "100",
-            redirectUrl = "https://github.com/android/android",
-        )
+    fun `ResultClicked emits nothing when opener succeeds`() = runTest {
+        every { urlOpener.open(any()) } returns true
 
         viewModel.effects.test {
-            viewModel.onAction(AutoCompleteAction.ResultClicked(repo))
-            val effect = awaitItem()
-            assertEquals(AutoCompleteUiEffect.OpenUrl("https://github.com/android/android"), effect)
+            viewModel.onAction(
+                AutoCompleteAction.ResultClicked(
+                    SearchResult.User(
+                        id = 1,
+                        displayName = "test-user",
+                        redirectUrl = "https://github.com/testuser",
+                    )
+                )
+            )
+            expectNoEvents()
         }
     }
 

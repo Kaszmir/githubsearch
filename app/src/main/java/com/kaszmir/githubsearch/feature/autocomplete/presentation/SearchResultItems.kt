@@ -43,7 +43,7 @@ fun SearchResultUserItem(
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onSurfaceVariant
         )
-        Spacer(modifier = Modifier.width(16.dp))
+        Spacer(modifier = Modifier.width(8.dp))
         Text(
             text = userName,
             style = MaterialTheme.typography.bodyLarge,

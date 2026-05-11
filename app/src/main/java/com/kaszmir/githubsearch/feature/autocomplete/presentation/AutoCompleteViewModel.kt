@@ -2,6 +2,7 @@ package com.kaszmir.githubsearch.feature.autocomplete.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kaszmir.githubsearch.core.system.UrlOpener
 import com.kaszmir.githubsearch.feature.autocomplete.domain.SearchUseCase
 import com.kaszmir.githubsearch.feature.autocomplete.domain.model.SearchResult
 import com.kaszmir.githubsearch.feature.autocomplete.domain.model.asSearchError
@@ -26,7 +27,8 @@ import javax.inject.Inject
 @OptIn(FlowPreview::class)
 @HiltViewModel
 class AutoCompleteViewModel @Inject constructor(
-    private val useCase: SearchUseCase
+    private val useCase: SearchUseCase,
+    private val urlOpener: UrlOpener,
 ): ViewModel() {
 
     private var searchJob: Job? = null
@@ -103,11 +105,8 @@ class AutoCompleteViewModel @Inject constructor(
         if(searchResult.redirectUrl.isBlank()) return
 
         viewModelScope.launch {
-            _effects.emit(
-                AutoCompleteUiEffect.OpenUrl(
-                    url = searchResult.redirectUrl
-                )
-            )
+            val opened = urlOpener.open(searchResult.redirectUrl)
+            if(!opened) _effects.emit(AutoCompleteUiEffect.OpenUrlFailed)
         }
     }
 }
