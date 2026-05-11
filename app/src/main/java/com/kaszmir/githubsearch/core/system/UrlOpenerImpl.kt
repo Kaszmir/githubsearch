@@ -10,8 +10,7 @@ import javax.inject.Singleton
 @Singleton
 class UrlOpenerImpl @Inject constructor(
     @ApplicationContext private val context: Context
-)
-    : UrlOpener {
+) : UrlOpener {
     override fun open(url: String): Boolean = runCatching {
         val intent = Intent(Intent.ACTION_VIEW, url.toUri())
             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
