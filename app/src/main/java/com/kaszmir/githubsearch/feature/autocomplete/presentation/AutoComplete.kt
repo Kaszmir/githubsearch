@@ -121,6 +121,15 @@ private fun AutoCompleteLayoutWithResultsPreview() {
     )
 }
 
+@Preview
+@Composable
+private fun AutoCompleteLayoutErrorPreview() {
+    AutoCompleteLayout(
+        uiState = AutoCompleteState(query = "test", isLoading = false, searchResults = emptyList(), errorMessage = "No internet connection"),
+        onAction = {}
+    )
+}
+
 private val searchResultList = listOf(
     SearchResult.User(1, "test_user", "noone"),
     SearchResult.Repository(2, "test_repo", "1000", ""),
